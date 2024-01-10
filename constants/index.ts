@@ -6,6 +6,5 @@ export const defaultValue = `function factorial(n)
     end
 end
 
-
-io.write("10! = ", factorial(10))
+print(factorial(5))
 `;

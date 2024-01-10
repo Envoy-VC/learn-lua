@@ -17,6 +17,7 @@
 	"dependencies": {
 		"@monaco-editor/react": "^4.6.0",
 		"@types/react": "^18.2.47",
+		"clsx": "^2.1.0",
 		"monaco-editor": "^0.45.0",
 		"next": "^14.0.4",
 		"nextra": "^2.13.2",
@@ -24,6 +25,7 @@
 		"prettier-plugin-tailwindcss": "^0.5.11",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"react-resizable-layout": "^0.7.2",
 		"wasmoon": "^1.16.0",
 		"zustand": "^4.4.7"
 	},

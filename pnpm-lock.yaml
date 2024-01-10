@@ -11,6 +11,9 @@ dependencies:
   '@types/react':
     specifier: ^18.2.47
     version: 18.2.47
+  clsx:
+    specifier: ^2.1.0
+    version: 2.1.0
   monaco-editor:
     specifier: ^0.45.0
     version: 0.45.0
@@ -32,6 +35,9 @@ dependencies:
   react-dom:
     specifier: ^18.2.0
     version: 18.2.0(react@18.2.0)
+  react-resizable-layout:
+    specifier: ^0.7.2
+    version: 0.7.2(react-dom@18.2.0)(react@18.2.0)
   wasmoon:
     specifier: ^1.16.0
     version: 1.16.0
@@ -2982,6 +2988,16 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+    dev: false
+
+  /react-resizable-layout@0.7.2(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-GrVzAecB6+osdAx5PPP3G8R9n7A2uDd3NL+PyrHWNRaVBivZmW/o0+yFjQdS5Bo016A2fIP11fAhefsknWN4aw==}
+    peerDependencies:
+      react: '>=17.0.0'
+      react-dom: '>=17.0.0'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /react@18.2.0:
