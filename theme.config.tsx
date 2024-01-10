@@ -1,18 +1,23 @@
-import React from 'react'
-import { DocsThemeConfig } from 'nextra-theme-docs'
+import React from 'react';
+import { DocsThemeConfig } from 'nextra-theme-docs';
 
 const config: DocsThemeConfig = {
-  logo: <span>My Project</span>,
-  project: {
-    link: 'https://github.com/shuding/nextra-docs-template',
-  },
-  chat: {
-    link: 'https://discord.com',
-  },
-  docsRepositoryBase: 'https://github.com/shuding/nextra-docs-template',
-  footer: {
-    text: 'Nextra Docs Template',
-  },
-}
+	logo: <span>My Project</span>,
+	project: {
+		link: 'https://github.com/Envoy-VC/learn-lua',
+	},
+	chat: {
+		link: 'https://discord.com',
+	},
+	docsRepositoryBase: 'https://github.com/Envoy-VC/learn-lua',
+	sidebar: {
+		autoCollapse: true,
+		defaultMenuCollapseLevel: 0,
+	},
 
-export default config
+	footer: {
+		text: 'Nextra Docs Template',
+	},
+};
+
+export default config;
