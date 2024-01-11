@@ -17,8 +17,7 @@ const CodeEditor = () => {
 	const handleMount = (editor: monaco.editor.IStandaloneCodeEditor) => {
 		editorRef.current = editor;
 		setEditor(editor);
-		const currentTheme = localStorage.getItem('theme');
-		const newTheme = currentTheme === 'dark' ? 'vs-dark' : 'light';
+		const newTheme = theme === 'dark' ? 'vs-dark' : 'light';
 		editorRef.current.updateOptions({
 			theme: newTheme,
 		});
@@ -26,8 +25,7 @@ const CodeEditor = () => {
 
 	React.useEffect(() => {
 		if (editorRef.current) {
-			const currentTheme = localStorage.getItem('theme');
-			const newTheme = currentTheme === 'dark' ? 'vs-dark' : 'light';
+			const newTheme = theme === 'dark' ? 'vs-dark' : 'light';
 			editorRef.current.updateOptions({
 				theme: newTheme,
 			});
