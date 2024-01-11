@@ -5,11 +5,7 @@
 	"online-compiler": {
 		"title": "Online Compiler ↗",
 		"type": "page",
-		"display": "hidden",
-		"theme": {
-			"layout": "raw",
-			"sidebar": false,
-			"theme": false
-		}
+		"href": "/online-compiler",
+		"newWindow": true
 	}
 }

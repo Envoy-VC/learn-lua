@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+.borderColor {
+	border-color: #e5e7eb;
+}
+
+.dark .borderColor {
+	border-color: #4b5563;
+}
+
+.dark .compilerContainer {
+	background-color: #1e1e1e;
+}
+
+.contents {
+	display: grid;
+	place-items: center;
+}
+
 .shadow {
 	border-radius: 8px;
 	box-shadow:
@@ -10,19 +27,14 @@
 }
 
 .sample-drag-bar {
-	flex-direction: row;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	flex-shrink: 0;
-	width: 12px;
+	width: 4px;
 	cursor: col-resize;
-	transition: background-color 0.3s ease-in-out;
 }
 
 .sample-drag-bar.sample-drag-bar--dragging,
 .sample-drag-bar:hover {
-	background-color: #63b3ed96;
+	background-color: #4bb0f9d6;
 }
 
 .sample-drag-bar.sample-drag-bar--horizontal {

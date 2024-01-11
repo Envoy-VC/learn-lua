@@ -2,4 +2,7 @@ import CodeEditor from './editor';
 import FileSystem from './file-system';
 import Output from './output';
 
-export { CodeEditor, FileSystem, Output };
+import Navbar from './navbar';
+import TabList from './tab-list';
+
+export { CodeEditor, FileSystem, Output, Navbar, TabList };

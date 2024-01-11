@@ -17,9 +17,7 @@ const Splitter = ({ id = 'drag-bar', dir, isDragging, ...props }: any) => {
 			onFocus={() => setIsFocused(true)}
 			onBlur={() => setIsFocused(false)}
 			{...props}
-		>
-			<div className='nx-h-10 nx-w-[6px] nx-rounded-lg nx-bg-[#d1d1d1] nx-transition-all nx-duration-300 nx-ease-in-out group-hover:nx-bg-[#353535]'></div>
-		</div>
+		/>
 	);
 };
 
