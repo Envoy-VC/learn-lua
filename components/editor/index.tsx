@@ -8,7 +8,7 @@ import { useFileSystem } from '../../stores/file-system';
 import TabList from '../tab-list';
 
 const CodeEditor = () => {
-	const { currentFileId, getFile } = useFileSystem();
+	const { currentFileId, getFile, setFileContent } = useFileSystem();
 	const { theme } = useTheme();
 	const { setEditor } = useEditor();
 	const editorRef = React.useRef<monaco.editor.IStandaloneCodeEditor | null>(
@@ -44,6 +44,9 @@ const CodeEditor = () => {
 				onMount={handleMount}
 				options={{
 					fontSize: 16,
+				}}
+				onChange={(value) => {
+					setFileContent(currentFileId, value);
 				}}
 			/>
 		</div>

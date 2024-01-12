@@ -29,6 +29,7 @@ interface Actions {
 	setCurrentFileId: (file: string) => void;
 	openFile: (id: string) => void;
 	closeFile: (id: string) => void;
+	setFileContent: (id: string, content: string) => void;
 	addFolderUnderId(folderId: string): void;
 	addFileUnderId(folderId: string): void;
 	deleteFileUnderId(fileId: string): void;
@@ -111,6 +112,12 @@ export const useFileSystem = create<State & Actions>((set, get) => ({
 			}
 		}
 		set({ openFiles: newOpenFiles });
+	},
+	setFileContent: (id: string, content: string) => {
+		const file = getFileContent(get().content, id);
+		if (file) {
+			file.content = content;
+		}
 	},
 	getFile: (id) => {
 		const content = get().content;
