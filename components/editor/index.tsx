@@ -1,13 +1,14 @@
 import React from 'react';
 import * as monaco from 'monaco-editor';
-import Editor, { Monaco } from '@monaco-editor/react';
-import { defaultValue } from '../../constants';
+import Editor from '@monaco-editor/react';
 import { useTheme } from 'next-themes';
 
 import { useEditor } from '../../stores/editor';
+import { useFileSystem } from '../../stores/file-system';
 import TabList from '../tab-list';
 
 const CodeEditor = () => {
+	const { currentFileId, getFile } = useFileSystem();
 	const { theme } = useTheme();
 	const { setEditor } = useEditor();
 	const editorRef = React.useRef<monaco.editor.IStandaloneCodeEditor | null>(
@@ -39,7 +40,7 @@ const CodeEditor = () => {
 				height='93vh'
 				defaultLanguage='lua'
 				className=''
-				defaultValue={defaultValue}
+				value={getFile(currentFileId)?.content ?? ''}
 				onMount={handleMount}
 				options={{
 					fontSize: 16,
