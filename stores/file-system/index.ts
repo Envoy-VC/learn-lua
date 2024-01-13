@@ -1,15 +1,14 @@
 import { create } from 'zustand';
 import { v4 as uuid } from 'uuid';
-import { defaultValue } from '../../constants';
-
-interface FileType {
+import { defaultValue, initialState } from '../../constants';
+export interface FileType {
 	id: string;
 	type: 'file';
 	name: string;
 	content: string;
 }
 
-interface FolderType {
+export interface FolderType {
 	id: string;
 	type: 'folder';
 	name: string;
@@ -22,6 +21,7 @@ interface State {
 	content: FolderType;
 	currentFileId: string;
 	openFiles: string[];
+	expandedFolders: string[];
 }
 
 interface Actions {
@@ -29,6 +29,9 @@ interface Actions {
 	setCurrentFileId: (file: string) => void;
 	openFile: (id: string) => void;
 	closeFile: (id: string) => void;
+	expandFolder: (id: string) => void;
+	collapseFolder: (fileId: string) => void;
+	findFilePath: (fileId: string) => string[];
 	setFileContent: (id: string, content: string) => void;
 	addFolderUnderId(folderId: string): void;
 	addFileUnderId(folderId: string): void;
@@ -67,30 +70,26 @@ const findFolder = (folder: FolderType, folderId: string): FolderType => {
 	}
 };
 
-const initialState: FolderType = {
-	id: uuid(),
-	type: 'folder',
-	name: 'root',
-	files: [
-		{
-			id: uuid(),
-			type: 'file',
-			name: 'main.lua',
-			content: defaultValue,
-		},
-		{
-			id: uuid(),
-			type: 'file',
-			name: 'index.lua',
-			content: `abcde`,
-		},
-	],
+const findFile = (folder: FolderType, id: string): FileType => {
+	for (const file of folder.files) {
+		if (file.id === id && file.type === 'file') {
+			return file;
+		} else {
+			if (file.type === 'folder') {
+				const result = findFile(file, id);
+				if (result) {
+					return result;
+				}
+			}
+		}
+	}
 };
 
 export const useFileSystem = create<State & Actions>((set, get) => ({
 	content: initialState,
 	currentFileId: initialState.files[0].id,
-	openFiles: [...initialState.files.map((file) => file.id)],
+	openFiles: [],
+	expandedFolders: [],
 	openFile: (id) => {
 		const openFiles = get().openFiles;
 		if (!openFiles.includes(id)) {
@@ -112,6 +111,44 @@ export const useFileSystem = create<State & Actions>((set, get) => ({
 			}
 		}
 		set({ openFiles: newOpenFiles });
+	},
+	expandFolder: (id) => {
+		const expandedFolders = get().expandedFolders;
+		if (!expandedFolders.includes(id)) {
+			set({ expandedFolders: [...expandedFolders, id] });
+		}
+	},
+	collapseFolder: (id) => {
+		const expandedFolders = get().expandedFolders;
+		const newExpandedFolders = expandedFolders.filter(
+			(folderId) => folderId !== id
+		);
+		set({ expandedFolders: newExpandedFolders });
+	},
+	findFilePath: (fileId: string) => {
+		// find entire path to file from root folder
+		const content = get().content;
+		const file = findFile(content, fileId);
+		if (!file) {
+			return;
+		}
+		const getFileFolder = (folder: FolderType, path: string[]) => {
+			const files = folder.files.filter((f) => f.type === 'file') as FileType[];
+			const folders = folder.files.filter(
+				(f) => f.type === 'folder'
+			) as FolderType[];
+			if (files.filter((f) => f.id === fileId).length > 0) {
+				return path;
+			} else {
+				for (const f of folders) {
+					const result = getFileFolder(f, [...path, f.id]);
+					if (result) {
+						return result;
+					}
+				}
+			}
+		};
+		return getFileFolder(content, [content.id]);
 	},
 	setFileContent: (id: string, content: string) => {
 		const file = getFileContent(get().content, id);

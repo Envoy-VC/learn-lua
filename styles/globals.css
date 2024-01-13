@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+.textColor {
+	color: #2c2c2c;
+}
+
+.dark .textColor {
+	color: #e7e7e7;
+}
+
+.hoverFile:hover {
+	background-color: #e5f0f7;
+}
+
+.dark .hoverFile:hover {
+	background-color: #2d3748;
+}
+
 .borderColor {
 	border-color: #e5e7eb;
 }

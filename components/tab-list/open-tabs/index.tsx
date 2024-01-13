@@ -4,8 +4,7 @@ import { FaX } from 'react-icons/fa6';
 import { useFileSystem } from '../../../stores/file-system';
 
 const OpenTabs = () => {
-	const { openFiles, getFile, closeFile, openFile, currentFileId } =
-		useFileSystem();
+	const { openFiles, getFile, closeFile, openFile } = useFileSystem();
 	return (
 		<div className='nx-flex'>
 			{openFiles.map((id) => {
@@ -17,7 +16,6 @@ const OpenTabs = () => {
 					>
 						<div className='nx-flex nx-flex-row nx-items-center nx-justify-between nx-gap-2'>
 							<div
-								className=''
 								onClick={() => {
 									openFile(id);
 								}}
