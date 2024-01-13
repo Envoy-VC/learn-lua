@@ -19,32 +19,6 @@ export const initialState: FolderType = {
 	files: [
 		{
 			id: uuid(),
-			type: 'folder',
-			name: 'src',
-			files: [
-				{
-					id: uuid(),
-					type: 'folder',
-					name: 'lib',
-					files: [
-						{
-							id: uuid(),
-							type: 'file',
-							name: 'account.lua',
-							content: `accounts file`,
-						},
-					],
-				},
-				{
-					id: uuid(),
-					type: 'file',
-					name: 'utils.lua',
-					content: `utils file`,
-				},
-			],
-		},
-		{
-			id: uuid(),
 			type: 'file',
 			name: 'main.lua',
 			content: defaultValue,

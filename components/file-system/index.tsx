@@ -1,5 +1,7 @@
 import React from 'react';
 import { useFileSystem } from '../../stores/file-system';
+import CreateFile from './create-file';
+import CreateFolder from './create-folder';
 
 // Icons
 import { LuaIcon, FolderIcon } from '../assets';
@@ -12,22 +14,32 @@ import clsx from 'clsx';
 
 const FileSystem = () => {
 	const {
-		content: { files },
+		content,
 		openFile,
 		expandedFolders,
 		expandFolder,
 		collapseFolder,
 		findFilePath,
 		currentFileId,
+		addFileUnderFolder,
+		getFilesInFolder,
+		addFolderUnderFolder,
+		getFoldersInFolder,
 	} = useFileSystem();
 
-	// filter files to bring folders to start and then files recursively
-	const sortedFiles = files
+	const [isCreatingFile, setIsCreatingFile] = React.useState<boolean>(false);
+	const [isCreatingFolder, setIsCreatingFolder] = React.useState<boolean>(false);
+
+	const sortedFiles = content.files
 		.filter((file) => file.type === 'folder')
-		.concat(files.filter((file) => file.type === 'file'));
+		.concat(content.files.filter((file) => file.type === 'file'));
 
 	const onNewFile = () => {
-		console.log(findFilePath(currentFileId));
+		setIsCreatingFile(true);
+	};
+
+	const onNewFolder = () => {
+		setIsCreatingFolder(true);
 	};
 
 	return (
@@ -40,7 +52,10 @@ const FileSystem = () => {
 							className='textColor nx-cursor-pointer'
 							onClick={onNewFile}
 						/>
-						<FaFolderPlus className='textColor nx-cursor-pointer' />
+						<FaFolderPlus
+							className='textColor nx-cursor-pointer'
+							onClick={onNewFolder}
+						/>
 					</div>
 				</div>
 				<div>
@@ -54,10 +69,39 @@ const FileSystem = () => {
 									expandedFolders,
 									expandFolder,
 									collapseFolder,
-									openFile
+									openFile,
+									isCreatingFile,
+									setIsCreatingFile,
+									findFilePath,
+									currentFileId,
+									addFileUnderFolder,
+									getFilesInFolder,
+									isCreatingFolder,
+									setIsCreatingFolder,
+									addFolderUnderFolder,
+									getFoldersInFolder
 								);
 						}
 					})}
+					{/* Create new File  input box like vs code and create on enter */}
+					{isCreatingFile && findFilePath(currentFileId).at(-1) === content.id && (
+						<CreateFile
+							setIsCreatingFile={setIsCreatingFile}
+							findFilePath={findFilePath}
+							currentFileId={currentFileId}
+							addFileUnderFolder={addFileUnderFolder}
+							getFilesInFolder={getFilesInFolder}
+						/>
+					)}
+					{isCreatingFolder && findFilePath(currentFileId).at(-1) === content.id && (
+						<CreateFolder
+							setIsCreatingFolder={setIsCreatingFolder}
+							findFilePath={findFilePath}
+							currentFileId={currentFileId}
+							addFolderUnderFolder={addFolderUnderFolder}
+							getFoldersUnderFolder={getFoldersInFolder}
+						/>
+					)}
 				</div>
 			</div>
 		</div>
@@ -86,7 +130,17 @@ const FolderPill = (
 	expandedFolders: string[],
 	expandFolder: (id: string) => void,
 	collapseFolder: (id: string) => void,
-	openFile: (id: string) => void
+	openFile: (id: string) => void,
+	isCreatingFile: boolean,
+	setIsCreatingFile: React.Dispatch<React.SetStateAction<boolean>>,
+	findFilePath: (id: string) => string[],
+	currentFileId: string,
+	addFileUnderFolder: (id: string, name: string) => void,
+	getFilesInFolder: (id: string) => FileType[],
+	isCreatingFolder: boolean,
+	setIsCreatingFolder: React.Dispatch<React.SetStateAction<boolean>>,
+	addFolderUnderFolder: (id: string, name: string) => void,
+	getFoldersInFolder: (id: string) => FolderType[]
 ) => {
 	const files = folder.files
 		.filter((file) => file.type === 'folder')
@@ -129,11 +183,39 @@ const FolderPill = (
 									expandedFolders,
 									expandFolder,
 									collapseFolder,
-									openFile
+									openFile,
+									isCreatingFile,
+									setIsCreatingFile,
+									findFilePath,
+									currentFileId,
+									addFileUnderFolder,
+									getFilesInFolder,
+									isCreatingFolder,
+									setIsCreatingFolder,
+									addFolderUnderFolder,
+									getFoldersInFolder
 								);
 						}
 					})}
 				</div>
+			)}
+			{isCreatingFile && findFilePath(currentFileId).at(-1) === folder.id && (
+				<CreateFile
+					setIsCreatingFile={setIsCreatingFile}
+					findFilePath={findFilePath}
+					currentFileId={currentFileId}
+					addFileUnderFolder={addFileUnderFolder}
+					getFilesInFolder={getFilesInFolder}
+				/>
+			)}
+			{isCreatingFolder && findFilePath(currentFileId).at(-1) === folder.id && (
+				<CreateFolder
+					setIsCreatingFolder={setIsCreatingFolder}
+					findFilePath={findFilePath}
+					currentFileId={currentFileId}
+					addFolderUnderFolder={addFolderUnderFolder}
+					getFoldersUnderFolder={getFoldersInFolder}
+				/>
 			)}
 		</div>
 	);

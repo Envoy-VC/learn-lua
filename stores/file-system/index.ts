@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { v4 as uuid } from 'uuid';
-import { defaultValue, initialState } from '../../constants';
+import { initialState } from '../../constants';
 export interface FileType {
 	id: string;
 	type: 'file';
@@ -14,8 +14,6 @@ export interface FolderType {
 	name: string;
 	files: (FileType | FolderType)[];
 }
-
-// example uuid: 1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed
 
 interface State {
 	content: FolderType;
@@ -32,9 +30,11 @@ interface Actions {
 	expandFolder: (id: string) => void;
 	collapseFolder: (fileId: string) => void;
 	findFilePath: (fileId: string) => string[];
+	getFilesInFolder: (folderId: string) => FileType[];
+	getFoldersInFolder: (folderId: string) => FolderType[];
 	setFileContent: (id: string, content: string) => void;
-	addFolderUnderId(folderId: string): void;
-	addFileUnderId(folderId: string): void;
+	addFolderUnderFolder(folderId: string, name: string): void;
+	addFileUnderFolder(folderId: string, name: string): void;
 	deleteFileUnderId(fileId: string): void;
 	deleteFolderUnderId(folderId: string): void;
 	renameFileUnderId(fileId: string, newName: string): void;
@@ -87,8 +87,8 @@ const findFile = (folder: FolderType, id: string): FileType => {
 
 export const useFileSystem = create<State & Actions>((set, get) => ({
 	content: initialState,
-	currentFileId: initialState.files[0].id,
-	openFiles: [],
+	currentFileId: initialState.files.at(0).id,
+	openFiles: [initialState.files.at(0).id],
 	expandedFolders: [],
 	openFile: (id) => {
 		const openFiles = get().openFiles;
@@ -105,9 +105,9 @@ export const useFileSystem = create<State & Actions>((set, get) => ({
 			const index = openFiles.indexOf(id);
 			console.log(index);
 			if (index > 0) {
-				set({ currentFileId: openFiles[index - 1] });
+				set({ currentFileId: openFiles[index - 1] ?? '' });
 			} else if (index === 0) {
-				set({ currentFileId: openFiles[index + 1] });
+				set({ currentFileId: openFiles[index + 1] ?? '' });
 			}
 		}
 		set({ openFiles: newOpenFiles });
@@ -126,9 +126,11 @@ export const useFileSystem = create<State & Actions>((set, get) => ({
 		set({ expandedFolders: newExpandedFolders });
 	},
 	findFilePath: (fileId: string) => {
-		// find entire path to file from root folder
 		const content = get().content;
 		const file = findFile(content, fileId);
+		if (fileId === '') {
+			return [content.id];
+		}
 		if (!file) {
 			return;
 		}
@@ -150,6 +152,22 @@ export const useFileSystem = create<State & Actions>((set, get) => ({
 		};
 		return getFileFolder(content, [content.id]);
 	},
+	getFilesInFolder: (folderId: string) => {
+		const content = get().content;
+		const folder = findFolder(content, folderId);
+		if (!folder) {
+			return;
+		}
+		return folder.files.filter((file) => file.type === 'file') as FileType[];
+	},
+	getFoldersInFolder: (folderId: string) => {
+		const content = get().content;
+		const folder = findFolder(content, folderId);
+		if (!folder) {
+			return;
+		}
+		return folder.files.filter((file) => file.type === 'folder') as FolderType[];
+	},
 	setFileContent: (id: string, content: string) => {
 		const file = getFileContent(get().content, id);
 		if (file) {
@@ -163,41 +181,72 @@ export const useFileSystem = create<State & Actions>((set, get) => ({
 	setCurrentFileId: (id) => {
 		set({ currentFileId: id });
 	},
-	addFolderUnderId: (folderId) => {
+	addFolderUnderFolder: (folderId, value) => {
 		const content = get().content;
 		const newFolder: FolderType = {
 			id: uuid(),
 			type: 'folder',
-			name: 'New Folder',
+			name: value,
 			files: [],
 		};
 		const targetFolder = findFolder(content, folderId);
 		if (!targetFolder) {
 			return;
 		}
-		const newContent = {
-			...content,
-			files: [...targetFolder.files, newFolder],
+		const updateFolder = (folder: FolderType): FolderType => {
+			if (folder.id === folderId) {
+				return {
+					...folder,
+					files: [...folder.files, newFolder],
+				};
+			} else {
+				return {
+					...folder,
+					files: folder.files.map((file) => {
+						if (file.type === 'folder') {
+							return updateFolder(file);
+						}
+						return file;
+					}),
+				};
+			}
 		};
+		const newContent = updateFolder(content);
 		set({ content: newContent });
 	},
-	addFileUnderId: (folderId) => {
+	addFileUnderFolder: (folderId, name) => {
 		const content = get().content;
 		const newFile: FileType = {
 			id: uuid(),
 			type: 'file',
-			name: 'New File',
-			content: defaultValue,
+			name: name,
+			content: '',
 		};
 		const targetFolder = findFolder(content, folderId);
 		if (!targetFolder) {
 			return;
 		}
-		const newContent = {
-			...content,
-			files: [...targetFolder.files, newFile],
+		const updateFolder = (folder: FolderType): FolderType => {
+			if (folder.id === folderId) {
+				return {
+					...folder,
+					files: [...folder.files, newFile],
+				};
+			} else {
+				return {
+					...folder,
+					files: folder.files.map((file) => {
+						if (file.type === 'folder') {
+							return updateFolder(file);
+						}
+						return file;
+					}),
+				};
+			}
 		};
+		const newContent = updateFolder(content);
 		set({ content: newContent });
+		set({ currentFileId: newFile.id });
 	},
 	deleteFileUnderId: (fileId) => {
 		const content = get().content;
